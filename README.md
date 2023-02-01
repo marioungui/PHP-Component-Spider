@@ -1,7 +1,7 @@
 # PHP Component Spider
  This is a web crawler developed for internal use of Brand Websites. This is not suitable for using in a web server but in a Terminal with the following example:
 
-    php index.php -cmvp -d{domain}
+    php spider.php -cmvp -d{domain}
 This is assuming that the PHP 8.1 engine is with global availability and the terminal has the right permissions to use the PHP binary.
 
 The current components that the script can scan for now is 
