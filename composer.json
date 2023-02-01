@@ -1,0 +1,6 @@
+{
+    "require": {
+        "spekulatius/phpscraper": "^1.0",
+        "symfony/http-kernel": "^5.4"
+    }
+}
