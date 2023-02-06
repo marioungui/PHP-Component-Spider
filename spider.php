@@ -83,7 +83,7 @@ foreach ($sitemap as $link => $value) {
 		colorLog("OK", "s");
 	}
 	catch (Exception $e) {
-		colorLog("MVP Block not found in: {$url}", "e");
+		colorLog("{$component} not found in: {$url}", "e");
 	}
 }
 
