@@ -78,7 +78,7 @@ foreach ($sitemap as $link => $value) {
 	$url = $value->link;
 	$web->go($url);
 	try {
-		$web->filter("//*[@class='mvp-block']")->text();   // "Selector Tests"
+		$web->filter($filter)->text();   // "Selector Tests"
 		echo "{$url} ";
 		colorLog("OK", "s");
 	}
