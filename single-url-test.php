@@ -1,4 +1,10 @@
 <?php
+
+/*
+THIS IS A TESTING ONLY SCRIPT, IT ONLY DOES CRAWL THE HOME PAGE AND THE URL TO BE TESTED
+FOR TESTING A SINGLE URL, JUST REPLACE THE $url VARIABLE AT LINE 81
+*/
+
 if(php_sapi_name() != "cli") {
     die("This script is only for CLI environment, please execute from a terminal.");
 }
@@ -70,33 +76,27 @@ $web->go($domain);
 $title = $web->title;
 echo "Buscando \033[33m{$component}\033[0m en el sitio de \033[36m{$title}\033[0m\n";
 
-$sitemap = $web
-    ->go($domain)
-    ->sitemap();
-
 $countok = 0;
 $countfail = 0;
 $countdup = 0;
-foreach ($sitemap as $link => $value) {
-	$url = $value->link;
-	$web->go($url);
-	try {
-		$dup = count($web->filter($filter));
-		if ($dup > 1) {
-			echo "{$url} ";
-			colorLog("OK", "s");
-			$countdup++;
-		}
-		else {
-			echo "{$url} ";
-			colorLog("OK", "s");
-			$countok++;
-		}
-	}
-	catch (Exception $e) {
-		colorLog("{$component} not found in: {$url}", "e");
-		$countfail++;
-	}
+$url = "https://www.nestlebabyandme.cl/nido-etapas";
+$web->go($url);
+try {
+    $dup = count($web->filter($filter));
+    if ($dup > 1) {
+        echo "{$url} ";
+        colorLog("DUPLICATED", "w");
+        $countdup++;
+    }
+    else {
+        echo "{$url} ";
+        colorLog("OK", "s");
+        $countok++;
+    }
+}
+catch (Exception $e) {
+    colorLog("{$component} not found in: {$url}", "e");
+    $countfail++;
 }
 echo "Total of pages with $component found: $countok".PHP_EOL;
 echo "Total of pages with $component not found: $countfail".PHP_EOL;
