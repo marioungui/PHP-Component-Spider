@@ -16,20 +16,7 @@ if(!isset($arg["c"])) {
 	exit();
 }
 
-switch (strtolower($arg["c"])) {
-	case 'mvp':
-		$component = "MVP Block";
-		$filter = "//*[@class='mvp-block']";
-		break;
-	case 'search':
-		$component = "Smart Question Search Engine Block";
-		$filter = "//*[@class='sqe-block']";
-		break;
-	default:
-		$component = "MVP Block";
-		$filter = "//*[@class='mvp-block']";
-		break;
-}
+require "filters.php";
 
 
 $web = new \Spekulatius\PHPScraper\PHPScraper;
@@ -37,8 +24,9 @@ $web = new \Spekulatius\PHPScraper\PHPScraper;
 $countok = 0;
 $countfail = 0;
 $countdup = 0;
-$url = "https://www.nestlebabyandme.cl/dup-test";
+$url = "https://www.nestlebabyandme.com.br/marcas/formulas-infantis/nan-supreme-2";
 $web->go($url);
+
 try {
     $dup = count($web->filter($filter));
     if ($dup > 1) {
@@ -46,10 +34,15 @@ try {
         colorLog("DUPLICATED", "w");
         $countdup++;
     }
-    else {
-        echo "{$url} ";
+	else if ($dup == 1) {
+		echo "{$url} ";
         colorLog("OK", "s");
         $countok++;
+	}
+    else {
+        echo "{$url} ";
+        colorLog("NOT FOUND", "e");
+        $countfail++;
     }
 }
 catch (Exception $e) {

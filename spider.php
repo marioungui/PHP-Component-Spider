@@ -16,21 +16,7 @@ if (!checkDomain($arg["d"])) {
 	exit();
 }
 
-switch (strtolower($arg["c"])) {
-	case 'mvp':
-		$component = "MVP Block";
-		$filter = "//*[@class='mvp-block']";
-		break;
-	case 'search':
-		$component = "Smart Question Search Engine Block";
-		$filter = "//*[@class='sqe-block']";
-		break;
-	default:
-		$component = "MVP Block";
-		$filter = "//*[@class='mvp-block']";
-		break;
-}
-
+require "filters.php";
 
 $web = new \Spekulatius\PHPScraper\PHPScraper;
 $web->setConfig(['timeout' => 30]); // set the timeout to 30s
@@ -57,10 +43,15 @@ foreach ($sitemap as $link => $value) {
 			colorLog("DUPLICATED", "w");
 			$countdup++;
 		}
-		else {
+		else if ($dup == 1) {
 			echo "{$url} ";
 			colorLog("OK", "s");
 			$countok++;
+		}
+		else {
+			echo "{$url} ";
+			colorLog("NOT FOUND", "e");
+			$countfail++;
 		}
 	}
 	catch (Exception $e) {
