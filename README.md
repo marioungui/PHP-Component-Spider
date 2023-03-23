@@ -20,7 +20,11 @@ The current components that the script can scan for now is
 
 - Brand Carousel [-cbrand-carousel]
 
+- Text Search [-cword]
+
 *There could be some issues with the related Products and Articles and further testing is coming to refine the filter.*
+
+*If a Text search is selected, make sure you alzo init the -w variable, for example: if you are searching for the word "Nestlé" the command will be -wNestlé*
 
 ## Setup
 
