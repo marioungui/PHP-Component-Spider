@@ -19,6 +19,8 @@ $sitemap = $web
 $countok = 0;
 $countfail = 0;
 $countdup = 0;
+
+// Init the Crawler and process all
 if ($arg["c"] == "word") {
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
