@@ -32,6 +32,7 @@ return array(
     'Psr\\EventDispatcher\\' => array($vendorDir . '/psr/event-dispatcher/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'League\\Uri\\' => array($vendorDir . '/league/uri/src', $vendorDir . '/league/uri-interfaces/src'),
+    'League\\Csv\\' => array($vendorDir . '/league/csv/src'),
     'Goutte\\' => array($vendorDir . '/fabpot/goutte/Goutte'),
     'DonatelloZa\\RakePlus\\' => array($vendorDir . '/donatello-za/rake-php-plus/src'),
 );

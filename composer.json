@@ -1,8 +1,7 @@
 {
-    "name": "marioungui/PHP-Component-Spider",
-    "description": "A PHP crawler and component search engine to use in Brand Websites",
     "require": {
         "spekulatius/phpscraper": "^1.0",
-        "symfony/http-kernel": "^5.4"
+        "symfony/http-kernel": "^5.4",
+        "league/csv": "^9.8"
     }
 }

@@ -16,6 +16,7 @@ class ComposerStaticInit3840ebaed245f1fd9965210a6be82f6a
         '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         'f598d06aa772fa33d905e87be6398fb1' => __DIR__ . '/..' . '/symfony/polyfill-intl-idn/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
+        '9e4824c5afbdc1482b6025ce3d4dfde8' => __DIR__ . '/..' . '/league/csv/src/functions_include.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -53,6 +54,7 @@ class ComposerStaticInit3840ebaed245f1fd9965210a6be82f6a
         'L' => 
         array (
             'League\\Uri\\' => 11,
+            'League\\Csv\\' => 11,
         ),
         'G' => 
         array (
@@ -169,6 +171,10 @@ class ComposerStaticInit3840ebaed245f1fd9965210a6be82f6a
         array (
             0 => __DIR__ . '/..' . '/league/uri/src',
             1 => __DIR__ . '/..' . '/league/uri-interfaces/src',
+        ),
+        'League\\Csv\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/csv/src',
         ),
         'Goutte\\' => 
         array (
