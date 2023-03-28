@@ -13,7 +13,7 @@ $domain = "https://{$arg["d"]}";
 $web->go($domain);
 $title = $web->title;
 echo "Searching for \033[33m".$component."\033[0m on the site \033[36m{$title}\033[0m\n";
-$writer = Writer::createFromPath("report.csv","w+");
+$writer = Writer::createFromPath(urlencode($component)."-".urlencode($arg["d"]).".csv","w+");
 $writer->insertOne(["URL","Result"]);
 
 $sitemap = $web
@@ -69,7 +69,7 @@ else {
 			else if ($dup == 1) {
 				echo "{$url} ";
 				colorLog("OK", "s");
-				$writer->insertOne([$url, "FOUND"]);
+				$writer->insertOne([$url, "OK"]);
 				$countok++;
 			}
 			else {
