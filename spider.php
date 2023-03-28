@@ -47,7 +47,7 @@ if ($arg["c"] == "word") {
 			}
 		}
 		catch (Exception $e) {
-			colorLog("{$component} not found in: {$url}", "e");
+			colorLog($component." not found in: {$url}", "e");
 			$countfail++;
 		}
 	}
@@ -80,12 +80,12 @@ else {
 			}
 		}
 		catch (Exception $e) {
-			colorLog("{$component} not found in: {$url}", "e");
+			colorLog($component." not found in: {$url}", "e");
 			$countfail++;
 		}
 	}
 }
 
-echo "Total of pages with $component found: $countok".PHP_EOL;
-echo "Total of pages with $component not found: $countfail".PHP_EOL;
-echo "Total of pages with $component duplicated: $countdup";
+echo "Total of pages with ".$component." found: $countok".PHP_EOL;
+echo "Total of pages with ".$component." not found: $countfail".PHP_EOL;
+echo "Total of pages with ".$component." duplicated: $countdup";
