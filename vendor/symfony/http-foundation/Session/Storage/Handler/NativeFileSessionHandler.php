@@ -30,11 +30,7 @@ class NativeFileSessionHandler extends \SessionHandler
      */
     public function __construct(string $savePath = null)
     {
-        if (null === $savePath) {
-            $savePath = \ini_get('session.save_path');
-        }
-
-        $baseDir = $savePath;
+        $baseDir = $savePath ??= \ini_get('session.save_path');
 
         if ($count = substr_count($savePath, ';')) {
             if ($count > 2) {
@@ -49,7 +45,11 @@ class NativeFileSessionHandler extends \SessionHandler
             throw new \RuntimeException(sprintf('Session Storage was not able to create directory "%s".', $baseDir));
         }
 
-        ini_set('session.save_path', $savePath);
-        ini_set('session.save_handler', 'files');
+        if ($savePath !== \ini_get('session.save_path')) {
+            ini_set('session.save_path', $savePath);
+        }
+        if ('files' !== \ini_get('session.save_handler')) {
+            ini_set('session.save_handler', 'files');
+        }
     }
 }

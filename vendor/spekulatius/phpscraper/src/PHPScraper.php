@@ -9,7 +9,9 @@ namespace Spekulatius\PHPScraper;
  */
 
 use Goutte\Client as GoutteClient;
+use Symfony\Component\HttpClient\CachingHttpClient;
 use Symfony\Component\HttpClient\HttpClient as SymfonyHttpClient;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class PHPScraper
 {
@@ -88,6 +90,9 @@ class PHPScraper
         // Add the defaults in
         $this->config = array_merge($defaults, $config);
 
+        //Add Client Cache
+        $store = new Store("cache");
+
         // Symfony HttpClient
         $httpClient = SymfonyHttpClient::create([
             'proxy' => $this->config['proxy'],
@@ -95,6 +100,9 @@ class PHPScraper
             'verify_host' => $this->config['disable_ssl'],
             'verify_peer' => $this->config['disable_ssl'],
         ]);
+
+        // Set HTTPClient with cache
+        $httpClient = new CachingHttpClient($httpClient, $store);
 
         // Goutte Client and set some config needed for it.
         $client = new GoutteClient($httpClient);
