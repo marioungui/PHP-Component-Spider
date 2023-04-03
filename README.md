@@ -20,6 +20,8 @@ The current components that the script can scan for now is
 
 - Brand Carousel [-cbrand-carousel]
 
+- Stages Block [-stages-block]
+
 - Text Search [-cword]
 
 *There could be some issues with the related Products and Articles and further testing is coming to refine the filter.*

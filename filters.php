@@ -26,6 +26,10 @@ switch (strtolower($arg["c"])) {
 		$component = "Brands Block";
 		$filter = "//*[starts-with(@id, 'brands_block')]/@id";
 		break;
+	case 'stages-block':
+		$component = "Stages Block";
+		$filter = "//*[starts-with(@id, 'stages_block')]/@id";
+		break;
 	case 'word':
 		$component = "String search '".$word."'";
 		$filter = "//*[contains(text(),'".$word."')]";
