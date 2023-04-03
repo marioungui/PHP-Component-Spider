@@ -1,5 +1,8 @@
 {
+    "name": "marioungui/php-component-spider",
+    "description": "a PHP package for scraping Brands Websites",
     "require": {
+        "php": "^8.1.4",
         "spekulatius/phpscraper": "^1.0",
         "symfony/http-kernel": "^5.4",
         "league/csv": "^9.8"
