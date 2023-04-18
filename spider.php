@@ -8,6 +8,7 @@ require "filters.php";
 
 $web = new \Spekulatius\PHPScraper\PHPScraper;
 $web->setConfig(['timeout' => 30]); // set the timeout to 30s
+$web->setConfig(['disable_ssl' => true]);
 $domain = "https://{$arg["d"]}";
 
 $web->go($domain);
@@ -57,7 +58,15 @@ if ($arg["c"] == "word") {
 else {
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
-		$web->go($url);
+		try {
+			$web->go($url);
+		} catch (Symfony\Component\HttpClient\Exception\TransportException $e) {
+			echo "{$url} ";
+			colorLog("HTTP Request Failed","e");
+			$writer->insertOne([$url, "HTTP Request Failed"]);
+			continue;
+		}
+		
 		try {
 			$dup = count($web->filter($filter));
 			if ($dup > 1) {
@@ -88,4 +97,4 @@ else {
 
 echo "Total of pages with ".$component." found: $countok".PHP_EOL;
 echo "Total of pages with ".$component." not found: $countfail".PHP_EOL;
-echo "Total of pages with ".$component." duplicated: $countdup";
+echo "Total of pages with ".$component." duplicated: $countdup".PHP_EOL;
