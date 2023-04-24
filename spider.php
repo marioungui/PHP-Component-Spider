@@ -8,7 +8,7 @@ require "filters.php";
 
 $web = new \Spekulatius\PHPScraper\PHPScraper;
 $web->setConfig(['timeout' => 30]); // set the timeout to 30s
-$web->setConfig(['disable_ssl' => true]);
+$web->setConfig(['max_redirects' => 10]);
 $domain = "https://{$arg["d"]}";
 
 $web->go($domain);
