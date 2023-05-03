@@ -10,5 +10,5 @@ set /p component=Type the number of the option you would use:
 set /p domain=Enter the domain where you want to search: 
 if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 cls
-if %component%==7 (echo php spider.php -c%component% -d%domain% -w%word%) else (php spider.php -c%component% -d%domain%)
+if %component%==7 (echo php spider.phar -c%component% -d%domain% -w%word%) else (php spider.phar -c%component% -d%domain%)
 pause
