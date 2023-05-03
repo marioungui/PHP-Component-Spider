@@ -40,10 +40,14 @@ switch (strtolower($arg["c"])) {
 	case 7:
 		$component = "String search '".$word."'";
 		$filter = "//*[contains(text(),'".$word."')]";
+		break;
+	case 'action-bar':
+	case 8:
+		$component = "Action Bar";
+		$filter = "//div[contains(@class, 'action-bar__wrapper')]";
 		break;	
 	default:
 		$component = "MVP Block";
 		$filter = "//*[@class='mvp-block']";
 		break;
 }
-
