@@ -28,7 +28,7 @@ $countdup = 0;
 // Init the Crawler and process all
 
 //If we are searching for a word, then we parse in a somewhat different way
-if ($arg["c"] == "word") {
+if ($arg["c"] == "word" || $arg["c"] == "7") {
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
 		$web->go($url);

@@ -46,7 +46,7 @@ if (!isset($arg)) {
         exit();
     }
 }
-if($arg["c"] == "word") {
+if($arg["c"] == "word" || $arg["c"] == "7") {
     if (!isset($arg["w"])) {
         colorLog("You should specify with the -w{word} parameter which word are you searching for","e");
         exit();
