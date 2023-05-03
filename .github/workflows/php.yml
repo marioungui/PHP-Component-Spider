@@ -6,10 +6,10 @@ on:
     - 'v*'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  build:
+  tagged-release:
 
     runs-on: ubuntu-latest
 
@@ -28,11 +28,15 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
-    - name: Install dependencies
+    - name: Create PHAR Archive
       run: php phar-creator.php
 
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
+    - name: Create a new release
+      uses: "marvinpinto/action-automatic-releases@latest"
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        prerelease: false
+        files: |
+          LICENSE
+          spider.phar
+          spider.bat
