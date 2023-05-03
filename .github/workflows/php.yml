@@ -16,6 +16,13 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Setup PHP with no coverage driver
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        coverage: none
+        ini-values: phar.readonly=Off
+
     - name: Validate composer.json and composer.lock
       run: composer validate --strict
 
