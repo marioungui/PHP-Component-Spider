@@ -91,7 +91,7 @@ class PHPScraper
         $this->config = array_merge($defaults, $config);
 
         //Add Client Cache
-        $store = new Store("cache");
+        $store = new Store(sys_get_temp_dir());
 
         // Symfony HttpClient
         $httpClient = SymfonyHttpClient::create([
