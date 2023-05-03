@@ -1,7 +1,7 @@
 
 # PHP Component Spider
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CodeFactor](https://www.codefactor.io/repository/github/marioungui/php-component-spider/badge)](https://www.codefactor.io/repository/github/marioungui/php-component-spider) [![Latest Stable Version](http://poser.pugx.org/marioungui/php-component-spider/v)](https://packagist.org/packages/marioungui/php-component-spider) [![License](http://poser.pugx.org/marioungui/php-component-spider/license)](https://packagist.org/packages/marioungui/php-component-spider)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CodeFactor](https://www.codefactor.io/repository/github/marioungui/php-component-spider/badge)](https://www.codefactor.io/repository/github/marioungui/php-component-spider) [![Latest Stable Version](https://poser.pugx.org/marioungui/php-component-spider/v)](https://packagist.org/packages/marioungui/php-component-spider) [![License](https://poser.pugx.org/marioungui/php-component-spider/license)](https://packagist.org/packages/marioungui/php-component-spider) [![PHAR Build](https://github.com/marioungui/PHP-Component-Spider/actions/workflows/php.yml/badge.svg)](https://github.com/marioungui/PHP-Component-Spider/actions/workflows/php.yml)
 
 This is a web crawler developed for internal use of Brand Websites. This is not suitable for using in a web server but in a Terminal with the following example:
 
