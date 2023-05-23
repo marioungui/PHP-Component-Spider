@@ -12,6 +12,7 @@ $web->setConfig(['max_redirects' => 10]);
 $domain = "https://{$arg["d"]}";
 
 $web->go($domain);
+
 $title = $web->title;
 echo "Searching for \033[33m".$component."\033[0m on the site \033[36m{$title}\033[0m\n";
 $writer = Writer::createFromPath(urlencode($component)."-".urlencode($arg["d"]).".csv","w+");
@@ -28,7 +29,7 @@ $countdup = 0;
 // Init the Crawler and process all
 
 //If we are searching for a word, then we parse in a somewhat different way
-if ($arg["c"] == "word" || $arg["c"] == "7") {
+if ($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "9" || $arg["c"] == "links") {
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
 		$web->go($url);

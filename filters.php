@@ -45,6 +45,11 @@ switch (strtolower($arg["c"])) {
 	case 8:
 		$component = "Action Bar";
 		$filter = "//div[contains(@class, 'action-bar__wrapper')]";
+		break;
+	case 'links':
+	case 9:
+		$component = "Links containing ".$word."";
+		$filter = "//a[contains(@class, '".$word."')]";
 		break;	
 	default:
 		$component = "MVP Block";

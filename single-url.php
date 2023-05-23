@@ -24,11 +24,11 @@ $web = new \Spekulatius\PHPScraper\PHPScraper;
 $countok = 0;
 $countfail = 0;
 $countdup = 0;
-$url = "https://www.nestlebabyandme.com.br/dup-test";
+$url = "https://www.nestlebabyandme.com.mx/subscribe";
 $web->go($url);
 
 // Init the Crawler and process all
-if ($arg["c"] == "word") {
+if ($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "9" || $arg["c"] == "links") {
     $web->go($url);
     try {
         $count = count($web->filter($filter));
@@ -72,7 +72,4 @@ else {
         colorLog("{$component} not found in: {$url}", "e");
         $countfail++;
     }
-    echo "Total of pages with $component found: $countok".PHP_EOL;
-    echo "Total of pages with $component not found: $countfail".PHP_EOL;
-    echo "Total of pages with $component duplicated: $countdup";
 }

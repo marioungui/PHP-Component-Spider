@@ -14,6 +14,6 @@ set /p domain=Enter the domain where you want to search:
 if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 if %component%==9 (set /p word=Enter the link, or part of the link you are searching for: )
 cls
-if %component%==7 (echo php spider.phar -c%component% -d%domain% -w%word%) else (php spider.phar -c%component% -d%domain%)
-if %component%==9 (echo php spider.phar -c%component% -d%domain% -w%word%) else (php spider.phar -c%component% -d%domain%)
+if %component%==7 (echo php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain% -w%word%) else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
+if %component%==9 (echo php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain% -w%word%) else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
 pause

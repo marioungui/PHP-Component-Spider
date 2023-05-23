@@ -4,6 +4,12 @@ if(php_sapi_name() != "cli") {
     die("This script is only for CLI environment, please execute from a terminal.");
 }
 
+/**
+ * Function for echoing a string with colored text on terminal
+ * @param string $str The string to be echoed in terminal
+ * @param string $type The type of message to be echoed, 'i' for info, 's' for success, 'w' for warning, 'i' for info (default)
+ * @return void
+ */
 function colorLog($str, $type = 'i'){
     switch ($type) {
         case 'e': //error
@@ -18,9 +24,6 @@ function colorLog($str, $type = 'i'){
         case 'i': //info
             echo "\033[36m$str \033[0m\n";
         break;      
-        default:
-        # code...
-        break;
     }
 }
 // Domain checker
@@ -46,7 +49,7 @@ if (!isset($arg)) {
         exit();
     }
 }
-if($arg["c"] == "word" || $arg["c"] == "7") {
+if($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "links" || $arg["c"] == "9") {
     if (!isset($arg["w"])) {
         colorLog("You should specify with the -w{word} parameter which word are you searching for","e");
         exit();
