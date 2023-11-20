@@ -49,8 +49,8 @@ switch (strtolower($arg["c"])) {
 	case 'links':
 	case 9:
 		$component = "Links containing ".$word."";
-		$filter = "//a[contains(@class, '".$word."')]";
-		break;	
+		$filter = "//a[contains(@href, '".$word."')]";
+		break;
 	default:
 		$component = "MVP Block";
 		$filter = "//*[@class='mvp-block']";
