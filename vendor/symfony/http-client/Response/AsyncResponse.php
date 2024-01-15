@@ -37,9 +37,10 @@ class AsyncResponse implements ResponseInterface, StreamableInterface
     private ?HttpClientInterface $client;
     private ResponseInterface $response;
     private array $info = ['canceled' => false];
+    /** @var callable|null */
     private $passthru;
-    private $stream;
-    private $yieldedState;
+    private ?\Iterator $stream = null;
+    private ?int $yieldedState = null;
 
     /**
      * @param ?callable(ChunkInterface, AsyncContext): ?\Iterator $passthru
