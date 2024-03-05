@@ -58,3 +58,34 @@ if($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "links" || $arg["c"] 
         $word = $arg["w"];
     }
 }
+/**
+ * Make a function where you can check if the URL is inside the given domain
+ *
+ * @param string $url The URL of the current page
+ * @param string $domain The domain that we are crawling
+ * @return boolean
+ */
+function validate_domain ($url,$domain) {
+       // Remove protocol if exists
+       $url = preg_replace("(^https?://)", "", $url);
+    
+       // Remove www if exists
+       $url = preg_replace("(^www.)", "", $url);
+   
+       // Extract the host from the URL
+       $url_host = parse_url($url, PHP_URL_HOST);
+   
+       // Check if the host of the URL matches the specified domain
+       if ($url_host === $domain) {
+           return true;
+       } else {
+           // Check if the domain is a subdomain
+           $domain = "." . $domain;
+           $pos = strpos($url_host, $domain);
+           if ($pos !== false && $pos === strlen($url_host) - strlen($domain)) {
+               return true;
+           } else {
+               throw new Exception("URL is not inside the specified domain");
+           }
+       }
+}

@@ -107,6 +107,59 @@ $records = Statement::create()
 
 <p class="message-notice">When called multiple times, each call overrides the last setting for these options.</p>
 
+### Selecting columns
+
+<p class="message-info">new in version <code>9.15.0</code>.</p>
+
+You may not always want to select all columns from the tabular data. Using the `select` method,
+you can specify which columns to use. The column can be specified by their name, if the instance
+`getHeader` returns a non-empty array, or you can default to using the column offset. You
+can even mix them both.
+
+```php
+use League\Csv\Reader;
+use League\Csv\Statement;
+
+$reader = Reader::createFromPath('/path/to/file.csv');
+$records = Statement::create()
+    ->select(1, 3, 'field')
+    ->process($reader);
+// $records is a League\Csv\ResultSet instance with only 3 fields
+```
+
+While we explain each method separately it is understood that you could use them all together to query your
+CSV document as you want like in the following example.
+
+```php
+use League\Csv\Reader;
+use League\Csv\Statement;
+
+$constraints = Statement::create()
+    ->select('Integer', 'Text', 'Date and Time')
+    ->where(fn (array $record): bool => (float) $record['Float'] < 1.3)
+    ->orderBy(fn (array $r1, array $r2): int => (int) $r2['Integer'] <=> (int) $r1['Integer'])
+    ->offset(2)
+    ->limit(5);
+
+$document = <<<CSV
+Integer,Float,Text,Multiline Text,Date and Time
+1,1.11,Foo,"Foo
+Bar",2020-01-01 01:01:01
+2,1.22,Bar,"Bar
+Baz",2020-02-02 02:02:02
+3,1.33,Baz,"Baz
+Foo",2020-03-03 03:03:03
+CSV;
+
+$csv = Reader::createFromString($document);
+$csv->setHeaderOffset(0);
+$records = $constraints->process($csv);
+//returns a ResultSet containing records which validate all the constraints.
+```
+
+Since a `Statement` instance is independent of the CSV document you can re-use it on different CSV
+documents or `TabularDataReader` instances if needed.
+
 ## FragmentFinder
 
 <p class="message-info">This mechanism is introduced with version <code>9.12.0</code>.</p>
@@ -154,8 +207,8 @@ use League\Csv\FragmentFinder;
 $reader = Reader::createFromPath('/path/to/file.csv');
 $finder = FragmentFinder::create();
 
-$finder->findAll('row=7-5;8-9', $reader);         // return an Iterator<TabulatDataReader>
-$finder->findFirst('row=7-5;8-9', $reader);       // return an TabulatDataReader
+$finder->findAll('row=7-5;8-9', $reader);         // return an Iterator<TabularDataReader>
+$finder->findFirst('row=7-5;8-9', $reader);       // return an TabularDataReader
 $finder->findFirstOrFail('row=7-5;8-9', $reader); // will throw
 ```
 

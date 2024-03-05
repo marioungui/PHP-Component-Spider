@@ -9,11 +9,9 @@ trait UsesFeeds
     /**
      * Returns a guessed sitemap URL based on the current host. Usually it's `/sitemap.xml`.
      *
-     * @todo implement actual checks if the URL exists.
-     *
-     * @return ?string
+     * @return string
      */
-    public function sitemapUrl(): ?string
+    public function sitemapUrl(): string
     {
         return $this->currentBaseHost() . '/sitemap.xml';
     }
@@ -33,7 +31,7 @@ trait UsesFeeds
      *
      * @todo Support for text-only sitemaps, split versions, image-sitemaps, etc.?
      *
-     * @return array $sitemap
+     * @return array<FeedEntry> $sitemap
      */
     public function sitemap(?string $url = null): array
     {
@@ -54,11 +52,9 @@ trait UsesFeeds
     /**
      * Returns the usual location (URL) for the static search index.
      *
-     * @todo implement actual checks if the URL exists.
-     *
-     * @return ?string
+     * @return string
      */
-    public function searchIndexUrl(): ?string
+    public function searchIndexUrl(): string
     {
         return $this->currentBaseHost() . '/index.json';
     }
@@ -76,7 +72,7 @@ trait UsesFeeds
     /**
      * Resolves the search index and returns an array of `\Spekulatius\PHPScraper\DataTransferObjects\FeedEntry`.
      *
-     * @return array $searchIndex
+     * @return array<FeedEntry> $searchIndex
      */
     public function searchIndex(?string $url = null): array
     {
@@ -96,12 +92,14 @@ trait UsesFeeds
 
     /**
      * Compiles a list of RSS urls based on the <link>-tags on the current page.
+     *
+     * @return array<string>
      */
     public function rssUrls(): array
     {
         $urls = $this->filterExtractAttributes('//link[@type="application/rss+xml"]', ['href']);
 
-        return array_map(fn ($url) => $this->makeUrlAbsolute($url), $urls);
+        return array_map(fn ($url) => (string) $this->makeUrlAbsolute($url), $urls);
     }
 
     /**
@@ -113,7 +111,7 @@ trait UsesFeeds
     public function rssRaw(?string ...$urls): array
     {
         return array_map(
-            fn ($url) => $this->parseXml($this->fetchAsset($url)),
+            fn ($url) => $this->parseXml($this->fetchAsset((string) $url)),
             empty($urls) ? $this->rssUrls() : $urls
         );
     }
@@ -122,7 +120,7 @@ trait UsesFeeds
      * Fetches a given set of RSS feeds and returns one array with raw data.
      *
      * @param ?string ...$urls
-     * @return array $rss
+     * @return array<FeedEntry> $rss
      */
     public function rss(?string ...$urls): array
     {

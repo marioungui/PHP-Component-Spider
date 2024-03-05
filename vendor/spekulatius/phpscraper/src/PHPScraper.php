@@ -8,10 +8,12 @@ namespace Spekulatius\PHPScraper;
  * Most calls are passed through to the Core class.
  */
 
-use Goutte\Client as GoutteClient;
+use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\CachingHttpClient;
 use Symfony\Component\HttpClient\HttpClient as SymfonyHttpClient;
 use Symfony\Component\HttpKernel\HttpCache\Store;
+
+
 
 class PHPScraper
 {
@@ -32,7 +34,7 @@ class PHPScraper
     public function __construct(?array $config = [])
     {
         // Prepare the core. It delegates all further processing.
-        $this->core = new Core();
+        $this->core = new Core;
 
         // And set the config.
         $this->setConfig($config);
@@ -41,7 +43,7 @@ class PHPScraper
     /**
      * Sets the config, generates the required Clients and updates the core with the new clients.
      *
-     * @var ?array $config = []
+     * @param ?array $config = []
      */
     public function setConfig(?array $config = []): self
     {
@@ -88,10 +90,7 @@ class PHPScraper
         ];
 
         // Add the defaults in
-        $this->config = array_merge($defaults, $config);
-
-        //Add Client Cache
-        $store = new Store(sys_get_temp_dir());
+        $this->config = array_merge($defaults, $config ?? []);
 
         // Symfony HttpClient
         $httpClient = SymfonyHttpClient::create([
@@ -101,11 +100,11 @@ class PHPScraper
             'verify_peer' => $this->config['disable_ssl'],
         ]);
 
-        // Set HTTPClient with cache
-        $httpClient = new CachingHttpClient($httpClient, $store);
+        $store = new Store(sys_get_temp_dir());
+        $cacheclient = new CachingHttpClient($httpClient, $store);
 
-        // Goutte Client and set some config needed for it.
-        $client = new GoutteClient($httpClient);
+        // BrowserKit Client and set some config needed for it.
+        $client = new HttpBrowser($cacheclient);
         $client->followRedirects($this->config['follow_redirects']);
         $client->followMetaRefresh($this->config['follow_meta_refresh']);
         $client->setMaxRedirects($this->config['max_redirects']);
@@ -127,6 +126,7 @@ class PHPScraper
     public function __get(string $name)
     {
         // We are assuming that all calls for properties actually method calls...
+        /** @phpstan-ignore-next-line */
         return $this->call($name);
     }
 
@@ -139,6 +139,9 @@ class PHPScraper
      */
     public function __call(string $name, array $arguments = null)
     {
+        // Ensure $arguments is an array (even if empty)
+        $arguments = $arguments ?? [];
+
         if ($name == 'call') {
             $name = $arguments[0];
             $result = $this->core->$name();
@@ -148,7 +151,7 @@ class PHPScraper
 
         // Did we get a Core class element? Keep this.
         if ($result instanceof Core) {
-            $this->core;
+            $this->core = $result;
 
             return $this;
         }

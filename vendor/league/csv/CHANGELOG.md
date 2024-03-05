@@ -2,6 +2,32 @@
 
 All Notable changes to `Csv` will be documented in this file
 
+## [9.15.0](https://github.com/thephpleague/csv/compare/9.14.0...9.15.0) - 2023-02-20
+
+### Added
+
+- `Statement::select`
+- `TabularDataReader::getRecordsAsObject`
+- `TabularDataReader::chunkBy`
+- `TabularDataReader::mapHeader`
+
+### Deprecated
+
+- `TabularDataReader::getObjects` use `TabularDataReader::getRecordsAsObject` instead
+
+### Fixed
+
+- `Reader::select` and `ResultSet::select` now internally use `Statement::select`
+- `Statement` should not throw when `LimitIterator` is used in combinaison with `ArrayIterator`.
+- `Statement` internal codebase improvement.
+- Using the `$header` argument on `Statement::process` is no longer deprecated. `E_USER_DEPRECATED` is no longer triggered.
+- BOM stripping no longer depends on the `mbstring` extension
+- `TabularDataReader::fetchColumn` is no longer deprecated
+
+### Removed
+
+- None
+
 ## [9.14.0](https://github.com/thephpleague/csv/compare/9.13.0...9.14.0) - 2023-12-29
 
 ### Added

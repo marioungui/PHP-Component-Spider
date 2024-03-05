@@ -10,9 +10,9 @@ use Symfony\Component\DomCrawler\Image as DomCrawlerImage;
 trait UsesContent
 {
     /**
-     * Access conveniences: Methods, to access data easier.
+     * Access conveniences: Methods to make the data more accessible.
      *
-     * I like to have direct access to stuff without many chained calls.
+     * I like to have direct access to stuff without too many chained calls.
      * So I've added a number of things which might be of interest.
      *
      * Any suggestions what is missing? Send a PR :)
@@ -23,6 +23,11 @@ trait UsesContent
     public function title(): ?string
     {
         return $this->filterFirstText('//title');
+    }
+
+    public function charset(): ?string
+    {
+        return $this->filterFirstExtractAttribute('//meta[@charset]', ['charset']);
     }
 
     public function contentType(): ?string
@@ -42,7 +47,7 @@ trait UsesContent
 
     public function viewport(): array
     {
-        return is_null($this->viewportString()) ? [] : \preg_split('/,\s*/', $this->viewportString());
+        return is_null($this->viewportString()) ? [] : (array) \preg_split('/,\s*/', $this->viewportString());
     }
 
     public function csrfToken(): ?string
@@ -58,7 +63,7 @@ trait UsesContent
     /**
      * Get the header collected as an array
      *
-     * @return array
+     * @return array<string, array|string|null>
      */
     public function headers(): array
     {
@@ -88,7 +93,7 @@ trait UsesContent
 
     public function keywords(): array
     {
-        return is_null($this->keywordString()) ? [] : \preg_split('/,\s*/', $this->keywordString());
+        return is_null($this->keywordString()) ? [] : (array) \preg_split('/,\s*/', $this->keywordString());
     }
 
     public function description(): ?string
@@ -114,7 +119,7 @@ trait UsesContent
     /**
      * Gets all Twitter-Card attributes (`twitter:`) as an array
      *
-     * @return array
+     * @return array<string, string>
      */
     public function twitterCard(): array
     {
@@ -125,7 +130,7 @@ trait UsesContent
         // Prepare the data
         $result = [];
         foreach ($data as $set) {
-            $result[$set[0]] = $set[1];
+            $result[(string) $set[0]] = (string) $set[1];
         }
 
         return $result;
@@ -134,7 +139,7 @@ trait UsesContent
     /**
      * Gets any OpenGraph attributes (`og:`) as an array
      *
-     * @return array
+     * @return array<string, string>
      */
     public function openGraph(): array
     {
@@ -145,7 +150,7 @@ trait UsesContent
         // Prepare the data
         $result = [];
         foreach ($data as $set) {
-            $result[$set[0]] = $set[1];
+            $result[(string) $set[0]] = (string) $set[1];
         }
 
         return $result;
@@ -184,7 +189,7 @@ trait UsesContent
     /**
      * Get all heading tags
      *
-     * @return array
+     * @return array<array>
      */
     public function headings(): array
     {
@@ -202,6 +207,7 @@ trait UsesContent
     {
         $lists = [];
 
+        /** @var \DOMElement $list */
         foreach ($this->currentPage->filter('ol, ul') as $list) {
             $lists[] = [
                 'type' => $list->tagName,
@@ -213,6 +219,9 @@ trait UsesContent
         return $lists;
     }
 
+    /**
+     * @return array<string>
+     **/
     public function orderedLists(): array
     {
         return array_values(array_filter($this->lists(), function ($list) {
@@ -220,6 +229,9 @@ trait UsesContent
         }));
     }
 
+    /**
+     * @return array<string>
+     **/
     public function unorderedLists(): array
     {
         return array_values(array_filter($this->lists(), function ($list) {
@@ -227,6 +239,9 @@ trait UsesContent
         }));
     }
 
+    /**
+     * @return array<string>
+     **/
     public function paragraphs(): array
     {
         return array_map(
@@ -251,14 +266,14 @@ trait UsesContent
     /**
      * Parses the content outline of the web-page
      *
-     * @return array
+     * @return array<string>
      */
     public function outline(): array
     {
         $result = $this->filterExtractAttributes('//h1|//h2|//h3|//h4|//h5|//h6', ['_name', '_text']);
 
         foreach ($result as $index => $array) {
-            $result[$index] = array_combine(['tag', 'content'], $array);
+            $result[$index] = array_combine(['tag', 'content'], (array) $array);
         }
 
         return $result;
@@ -267,14 +282,14 @@ trait UsesContent
     /**
      * Parses the content outline of the web-page
      *
-     * @return array
+     * @return array<array>
      */
     public function outlineWithParagraphs(): array
     {
         $result = $this->filterExtractAttributes('//h1|//h2|//h3|//h4|//h5|//h6|//p', ['_name', '_text']);
 
         foreach ($result as $index => $array) {
-            $result[$index] = array_combine(['tag', 'content'], $array);
+            $result[$index] = array_combine(['tag', 'content'], (array) $array);
             $result[$index]['content'] = trim($result[$index]['content']);
         }
 
@@ -290,6 +305,7 @@ trait UsesContent
     {
         $result = $this->filterExtractAttributes('//h1|//h2|//h3|//h4|//h5|//h6|//p', ['_name', '_text']);
 
+        /** @var array $array */
         foreach ($result as $index => $array) {
             if ($array[1] !== '') {
                 $result[$index] = array_combine(['tag', 'content'], $array);
@@ -317,7 +333,7 @@ trait UsesContent
      * @see https://phpscraper.de/examples/extract-keywords.html
      * @see https://github.com/spekulatius/phpscraper-keyword-scraping-example
      *
-     * @return array
+     * @return array<string>
      */
     protected function prepContent(): array
     {
@@ -333,7 +349,7 @@ trait UsesContent
             [
                 $this->author(),
                 $this->description(),
-                join(' ', $this->keywords()),
+                implode(' ', $this->keywords()),
             ]
         );
 
@@ -376,7 +392,7 @@ trait UsesContent
     public function contentKeywords($locale = 'en_US'): array
     {
         // Extract the keyword phrases and return a sorted array
-        return RakePlus::create(join(' ', $this->prepContent()), $locale)
+        return RakePlus::create(implode(' ', $this->prepContent()), $locale)
             ->sort('asc')
             ->get();
     }
@@ -403,7 +419,7 @@ trait UsesContent
     public function contentKeywordsWithScores($locale = 'en_US'): array
     {
         // Extract the keyword phrases and return a sorted array
-        return RakePlus::create(join(' ', $this->prepContent()), $locale)
+        return RakePlus::create(implode(' ', $this->prepContent()), $locale)
             ->sortByScore('desc')
             ->scores();
     }
@@ -441,7 +457,7 @@ trait UsesContent
         // Filter the array
         return array_values(array_filter(
             $this->links(),
-            function ($link) use (&$currentRootDomain, &$rules) {
+            function ($link) use (&$currentRootDomain) {
                 $linkRootDomain = Uri::createFromString($link)->getHost();
 
                 return ($currentRootDomain === $linkRootDomain);
@@ -470,15 +486,19 @@ trait UsesContent
      */
     public function linksWithDetails(): array
     {
+        /** @var array<\DOMElement> $links */
         $links = $this->filter('//a');
 
         // Generate a list of all image entries
         $result = [];
+
         foreach ($links as $link) {
             // Check if the anchor is only an image. If so, wrap it into DomCrawler\Image to get the Uri.
             $image = [];
+
+            /** @var \DOMElement $childNode */
             foreach ($link->childNodes as $childNode) {
-                if (!empty($childNode) && $childNode->nodeName === 'img') {
+                if ($childNode->nodeName === 'img') {
                     $image[] = (new DomCrawlerImage($childNode, $this->currentBaseHost()))->getUri();
                 }
             }
@@ -493,7 +513,7 @@ trait UsesContent
             $entry = [
                 'url' => $uri,
                 'protocol' => \strpos($uri, ':') !== false ? explode(':', $uri)[0] : null,
-                'text' => trim($link->nodeValue),
+                'text' => trim($link->nodeValue ?? ''),
                 'title' => $link->getAttribute('title') === '' ? null : $link->getAttribute('title'),
                 'target' => $link->getAttribute('target') === '' ? null : $link->getAttribute('target'),
                 'rel' => ($rel === '') ? null : strtolower($rel),
@@ -519,10 +539,12 @@ trait UsesContent
      */
     public function images(): array
     {
-        $images = $this->filter('//img')->images();
-
         // Generate a list of all image entries
         $result = [];
+
+        $images = $this->filter('//img')->images();
+
+        /** @var \Symfony\Component\DomCrawler\Image $image */
         foreach ($images as $image) {
             $result[] = $image->getUri();
         }
@@ -537,10 +559,12 @@ trait UsesContent
      */
     public function imagesWithDetails(): array
     {
-        $images = $this->filter('//img');
-
         // Generate a list of all image entries
         $result = [];
+
+        /** @var array<\DOMElement> $images */
+        $images = $this->filter('//img');
+
         foreach ($images as $image) {
             // Collect the URL and commonly interesting attributes
             $result[] = [

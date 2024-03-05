@@ -51,8 +51,9 @@ switch (strtolower($arg["c"])) {
 		$component = "Links containing ".$word."";
 		$filter = "//a[contains(@href, '".$word."')]";
 		break;
-	default:
-		$component = "MVP Block";
-		$filter = "//*[@class='mvp-block']";
+	case 'cta':
+	case 10:
+		$component = "Links inside the main container";
+		$filter = "//main/div[contains(@class, 'container')]//a[contains(text(), 'click')]";
 		break;
 }

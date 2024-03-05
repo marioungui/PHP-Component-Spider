@@ -7,7 +7,7 @@ class MetaContentTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function testMissingCharset()
+    public function testMissingContentType()
     {
         $web = new \Spekulatius\PHPScraper\PHPScraper;
 
@@ -21,7 +21,7 @@ class MetaContentTypeTest extends \PHPUnit\Framework\TestCase
     /**
      * @test
      */
-    public function testWithCharset()
+    public function testWithContentType()
     {
         $web = new \Spekulatius\PHPScraper\PHPScraper;
 

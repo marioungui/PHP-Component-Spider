@@ -117,22 +117,25 @@ returned iterator. Added column will only contain the `null` value.
 
 <p class="message-warning">If the header record contains non-unique string values, a <code>Exception</code> exception is triggered.</p>
 
-### getObjects
+### getRecordsAsObject
 
-<p class="message-notice">Added in version <code>9.12.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+`getObjects` is deprecated in favor of `getRecordsAsObject` to make the public API more consistent.
+
+<p class="message-notice"><code>getObjects</code> Added in version <code>9.12.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+<p class="message-notice"><code>getRecordsAsObject</code> Added in version <code>9.15.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
 
 If you prefer working with objects instead of arrays it is possible to deserialize your CSV document using
-the `getObjects` method. This method will convert each CSV record into your specified class instances.
+the `getRecordsAsObject` method. This method will convert each CSV record into your specified class instances.
 
 ```php
 $csv = Reader::createFromString($document);
 $csv->setHeaderOffset(0);
-foreach ($csv->getObjects(ClimaticRecord::class) as $instance) {
+foreach ($csv->getRecordsAsObject(ClimaticRecord::class) as $instance) {
     // each $instance entry will be an instance of the Weather class;
 }
 ```
 
-The `getObjects` method can take an optional `$header` argument which is the same mapper argument as the one use
+The `getRecordsAsObject` method can take an optional `$header` argument which is the same mapper argument as the one use
 with the `getRecords` method.
 
 <p class="message-info">You can get more info on how to configure your class to enable this feature by
@@ -447,6 +450,41 @@ $reader = Reader::createFromPath('/path/to/my/file.csv')
 ```
 
 <p class="message-notice">Added in version <code>9.12.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+<p class="message-info"> Wraps the functionality of <code>Statement::select</code>.</p>
+
+### mapHeader
+
+<p class="message-notice">Added in version <code>9.15.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+<p class="message-info"> Wraps the functionality of <code>Statement::process</code>.</p>
+
+Complementary to the `select` method, the `mapHeader` method allows you to redefine the column header
+names and order and returns a new `TabularDataReader`. The submitted array argument act like the
+array from the `Statement::process` method but instead of returning a iterable structure of
+records it returns a new `TabularDataReader` with a new header.
+
+```php
+$tabularData = $reader
+    ->slice(0, 10)
+    ->mapHeader([
+        3 => 'Year',
+        2 => 'Gender',
+        0 => 'Firstname',
+        1 => 'Count',
+    ]);
+
+//is equivalent to
+
+$tabularData = Statement::create()
+    ->offset(0)
+    ->limit(10)
+    ->process($reader, [
+        3 => 'Year',
+        2 => 'Gender',
+        0 => 'Firstname',
+        1 => 'Count',
+    ]);
+$tabularData->getHeader(); // returns ['Year', 'Gender', 'Firstname', 'Count'];
+```
 
 ### matching, matchingFirst, matchingFirstOrFail
 
@@ -468,3 +506,22 @@ $reader->matchingFirstOrFail('row=3-1;4-6'); // will throw
 
 <p class="message-info"> Wraps the functionality of <code>FragmentFinder</code> class.</p>
 <p class="message-notice">Added in version <code>9.12.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+
+### chunkBy
+
+<p class="message-notice">Added in version <code>9.15.0</code> for <code>Reader</code> and <code>ResultSet</code>.</p>
+
+If you are dealing with a large CSV and you want it to be split in smaller sizes for better handling you can use
+the `chunkBy` method which breaks the `TabularDataReader` into multiple, smaller instances with a given size. The
+last instance may contain fewer records because of the chunk size you have chosen.
+
+```php
+use League\Csv\Reader;
+use League\Csv\TabularDataReader;
+use League\Csv\Writer;
+
+$chunks = Reader::createFromPath('path/to/a/huge/file.csv')->chunkBy(1000);
+foreach ($chunks as $chunk) {
+ // $chunk is a small CSV of 1000 records or less
+}
+```

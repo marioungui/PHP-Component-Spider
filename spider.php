@@ -29,10 +29,15 @@ $countdup = 0;
 // Init the Crawler and process all
 
 //If we are searching for a word, then we parse in a somewhat different way
-if ($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "9" || $arg["c"] == "links") {
+if ($arg["c"] == "word" || $arg["c"] == "7" || $arg["c"] == "9" || $arg["c"] == "links" || $arg["c"] == "10" || $arg["c"] == "cta") {
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
-		$web->go($url);
+		try {
+			$web->go($url);
+		}
+		catch (Symfony\Component\HttpClient\Exception\TransportException) {
+			continue;
+		}
 		try {
 			$count = count($web->filter($filter));
 			if ($count > 0) {
