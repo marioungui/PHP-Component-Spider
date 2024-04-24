@@ -34,7 +34,7 @@ switch (strtolower($arg["c"])) {
 	case 'stages-block':
 	case 6:
 		$component = "Stages Block";
-		$filter = "//*[starts-with(@id, 'stages_block')]/@id";
+		$filter = "//*[starts-with(@id, 'stages_block')]";
 		break;
 	case 'word':
 	case 7:
@@ -53,7 +53,7 @@ switch (strtolower($arg["c"])) {
 		break;
 	case 'cta':
 	case 10:
-		$component = "Links inside the main container";
-		$filter = "//main/div[contains(@class, 'container')]//a[contains(text(), 'click')]";
+		$component = "Stages Block using From Library";
+		$filter = "//div[contains(@class, 'paragraph--type--stages-block')]//div[contains(@class, 'grid-col-10')]";
 		break;
 }

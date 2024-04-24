@@ -29,7 +29,7 @@ return array(
     'Psr\\EventDispatcher\\' => array($vendorDir . '/psr/event-dispatcher/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Masterminds\\' => array($vendorDir . '/masterminds/html5/src'),
-    'League\\Uri\\' => array($vendorDir . '/league/uri/src', $vendorDir . '/league/uri-interfaces/src'),
+    'League\\Uri\\' => array($vendorDir . '/league/uri-interfaces/src', $vendorDir . '/league/uri/src'),
     'League\\Csv\\' => array($vendorDir . '/league/csv/src'),
     'DonatelloZa\\RakePlus\\' => array($vendorDir . '/donatello-za/rake-php-plus/src'),
 );

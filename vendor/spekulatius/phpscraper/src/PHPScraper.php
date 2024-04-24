@@ -9,11 +9,7 @@ namespace Spekulatius\PHPScraper;
  */
 
 use Symfony\Component\BrowserKit\HttpBrowser;
-use Symfony\Component\HttpClient\CachingHttpClient;
 use Symfony\Component\HttpClient\HttpClient as SymfonyHttpClient;
-use Symfony\Component\HttpKernel\HttpCache\Store;
-
-
 
 class PHPScraper
 {
@@ -100,11 +96,8 @@ class PHPScraper
             'verify_peer' => $this->config['disable_ssl'],
         ]);
 
-        $store = new Store(sys_get_temp_dir());
-        $cacheclient = new CachingHttpClient($httpClient, $store);
-
         // BrowserKit Client and set some config needed for it.
-        $client = new HttpBrowser($cacheclient);
+        $client = new HttpBrowser($httpClient);
         $client->followRedirects($this->config['follow_redirects']);
         $client->followMetaRefresh($this->config['follow_meta_refresh']);
         $client->setMaxRedirects($this->config['max_redirects']);

@@ -13,16 +13,16 @@ if(php_sapi_name() != "cli") {
 function colorLog($str, $type = 'i'){
     switch ($type) {
         case 'e': //error
-            echo "\033[31m$str \033[0m\n";
+            echo "\033[31m{$str}\033[0m";
         break;
         case 's': //success
-            echo "\033[32m$str \033[0m\n";
+            echo "\033[32m{$str}\033[0m";
         break;
         case 'w': //warning
-            echo "\033[33m$str \033[0m\n";
+            echo "\033[33m{$str}\033[0m";
         break;  
         case 'i': //info
-            echo "\033[36m$str \033[0m\n";
+            echo "\033[36m{$str}\033[0m";
         break;      
     }
 }

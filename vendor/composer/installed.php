@@ -3,7 +3,7 @@
         'name' => 'marioungui/php-component-spider',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '7e5c8f3931bced7984d1a9c3a77ccc307fb1503a',
+        'reference' => 'ee16bfc6e36b89117acc7d59dffc9817fdad98ae',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -49,7 +49,7 @@
         'marioungui/php-component-spider' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '7e5c8f3931bced7984d1a9c3a77ccc307fb1503a',
+            'reference' => 'ee16bfc6e36b89117acc7d59dffc9817fdad98ae',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
