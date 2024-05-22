@@ -14,6 +14,6 @@ set /p domain=Enter the domain where you want to search:
 if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 if %component%==9 (set /p word=Enter the URL, or part of the URL you are searching for: )
 cls
-if %component%==7 (echo php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -w"%word%" -c%component% -d%domain% ) else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
-if %component%==9 (echo php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -w"%word%" -c%component% -d%domain% ) else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
+if %component%==7 (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -w "%word%" -c "%component%" -d "%domain%") else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
+if %component%==9 (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -w "%word%" -c "%component%" -d "%domain%") else (php -d curl.cainfo="%cd%\nestca.pem" -d openssl.cafile="%cd%\nestca.pem" spider.phar -c%component% -d%domain%)
 pause
