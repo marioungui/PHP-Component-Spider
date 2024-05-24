@@ -3,16 +3,14 @@ name: PHP Create PHAR Archive
 on:
   push:
     tags:
-    - 'v*' # Filtra los push solo a etiquetas que comiencen con 'v'
+    - 'v*'
   workflow_dispatch:
-    # Este evento permite ejecutar manualmente la acción desde GitHub UI
 
 permissions:
   contents: write
 
 jobs:
   tagged-release:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -46,9 +44,19 @@ jobs:
     - name: Create PHAR Archive
       run: php phar-creator.php
 
-    - name: Create SFX Archive
-      run: 7z a -sfx../../../../../.github/actions/7z-sfx/7z.sfx php-component-spider.exe php-8.2 spider.phar spider.bat LICENSE
+    - name: Install 7-Zip
+      run: sudo apt-get install -y p7zip-full
 
+    - name: Download 7z SFX module
+      run: |
+        if [ ! -f /usr/lib/p7zip/7z.sfx ]; then
+          wget https://www.7-zip.org/a/7z1900-extra.tar.bz2 -O 7z-extra.tar.bz2
+          tar -xjf 7z-extra.tar.bz2
+          sudo cp 7z1900-extra/sfx/7z.sfx /usr/lib/p7zip/7z.sfx
+        fi
+
+    - name: Create SFX Archive
+      run: 7z a -sfx/usr/lib/p7zip/7z.sfx php-component-spider.exe php-8.2 spider.phar spider.bat LICENSE
 
     - name: Create a new release
       if: startsWith(github.ref, 'refs/tags/')
