@@ -35,15 +35,26 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Download PHP 8.2 zip
+      run: wget https://cdn.emedos.com.py/php-8.2.zip -O php-8.2.zip
+
+    - name: Unzip PHP 8.2
+      run: unzip php-8.2.zip
+
     - name: Create PHAR Archive
       run: php phar-creator.php
 
+    - name: Install p7zip
+      run: sudo apt-get install p7zip-full
+
+    - name: Create SFX Archive
+      run: 7z a -sfx7z.sfxbin spider.exe php-8.2 spider.phar spider.bat LICENSE
+
     - name: Create a new release
-      uses: "marvinpinto/action-automatic-releases@latest"
+      uses: marvinpinto/action-automatic-releases@latest
       with:
         repo_token: "${{ secrets.GITHUB_TOKEN }}"
         prerelease: false
         files: |
           LICENSE
-          spider.phar
-          spider.bat
+          spider.exe
