@@ -2,10 +2,10 @@ name: PHP Create PHAR Archive
 
 on:
   push:
-    branches:
-    - main
-    - test-branch
+    tags:
+    - 'v*' # Filtra los push solo a etiquetas que comiencen con 'v'
   workflow_dispatch:
+    # Este evento permite ejecutar manualmente la acción desde GitHub UI
 
 permissions:
   contents: write
@@ -47,7 +47,7 @@ jobs:
       run: php phar-creator.php
 
     - name: Create SFX Archive
-      run: 7z a -sfx7z.sfxbin PHP-Component-Spider.exe php-8.2 spider.phar spider.bat LICENSE
+      run: 7z a -sfx7z.sfx php-component-spider.exe php-8.2 spider.phar spider.bat LICENSE
 
     - name: Create a new release
       if: startsWith(github.ref, 'refs/tags/')
@@ -57,4 +57,4 @@ jobs:
         prerelease: false
         files: |
           LICENSE
-          PHP-Component-Spider.exe
+          php-component-spider.exe
