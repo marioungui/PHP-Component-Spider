@@ -1,4 +1,42 @@
 <?php
+
+/**
+ * Current version of the script
+ *
+ * @var string
+ */
+$CurrentVersion = "v0.5.1";
+
+function checkForUpdate() {
+    global $CurrentVersion;
+    $context = stream_context_create([
+        'http' => [
+            'method' => 'GET',
+            'header' => "User-Agent: PHP-Component-Spider\r\n"
+        ]
+    ]);
+    $github_api_url = 'https://api.github.com/repos/marioungui/PHP-Component-Spider/releases/latest';
+    $github_content = file_get_contents($github_api_url, false, $context);
+    if ($github_content === false) {
+        die("Failed to fetch content from Github API.");
+    }
+    $release = json_decode($github_content);
+    $latest_version = $release->tag_name;
+    if (version_compare($latest_version, $CurrentVersion) > 0) {
+        colorLog("A new version of the script is available. Do you want to download it? (y/n) ", "i");
+        $answer = trim(fgets(STDIN));
+        if (strtolower($answer) === 'y') {
+            $url='https://github.com/marioungui/PHP-Component-Spider/releases/download/'.$release->tag_name.'/PHP-Component-Spider.exe';
+            $cmd=sprintf( 'start %s',$url );
+            exec( $cmd );
+        } else {
+            echo "Update canceled.\n";
+        }
+    } else {
+        echo "This script is up to date.\n";
+    }
+}
+
 // CLI Helper
 if(php_sapi_name() != "cli") {
     die("This script is only for CLI environment, please execute from a terminal.");
@@ -26,6 +64,9 @@ function colorLog($str, $type = 'i'){
         break;      
     }
 }
+
+checkForUpdate();
+
 // Domain checker
 function checkDomain($domain) {
 	if(filter_var(gethostbyname($domain), FILTER_VALIDATE_IP)) {

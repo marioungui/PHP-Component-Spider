@@ -15,6 +15,6 @@ set /p domain=Enter the domain where you want to search:
 if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 if %component%==9 (set /p word=Enter the URL, or part of the URL you are searching for: )
 cls
-if %component%==7 (php spider.phar -c%component% -d%domain% -w%word%) else (php spider.phar -c%component% -d%domain%)
-if %component%==9 (php spider.phar -c%component% -d%domain% -w"%word%") else (php spider.phar -c%component% -d%domain%)
+if %component%==7 (php spider.phar -w "%word%" -c "%component%" -d "%domain%") else (php spider.phar -c "%component%" -d "%domain%")
+if %component%==9 (php spider.phar -w "%word%" -c "%component%" -d "%domain%") else (php spider.phar -c "%component%" -d "%domain%")
 pause
