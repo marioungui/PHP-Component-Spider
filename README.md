@@ -23,6 +23,7 @@ This PHP Component Spider is designed to scrape websites for specific components
 ```bash
 git clone https://github.com/marioungui/PHP-Component-Spider.git
 ```
+
 2. Navigate to the project directory:
 
 ```bash
@@ -36,6 +37,7 @@ composer install
 ```
 
 4. Build the Phar package:
+
 ```bash
 php -d phar.readonly=0 phar-creator.php
 ```
@@ -44,6 +46,7 @@ php -d phar.readonly=0 phar-creator.php
 6. Follow the on-screen instructions to select the component to search for and the domain to scrape.
 
 ## Filters
+
 The filters are defined in filters.php and use XPath to identify specific components on the web pages. Here are the current filters available:
 
 | Component | Index | Filter |
@@ -63,9 +66,9 @@ The filters are defined in filters.php and use XPath to identify specific compon
 
 Extending the tool with new filters is simple:
 
-1.  Open the `filters.php` file.
-2.  Add a new `case` in the `switch` statement with your component name or index.
-3.  Define the `$component` and `$filter` variables with your custom XPath.
+1. Open the `filters.php` file.
+2. Add a new `case` in the `switch` statement with your component name or index.
+3. Define the `$component` and `$filter` variables with your custom XPath.
 
 Example:
 
@@ -78,7 +81,9 @@ case 11:
 ```
 
 ## Contributing
+
 Feel free to submit issues or pull requests if you have any improvements or new features you'd like to add.
 
 ## License
+
 This project is licensed under the MIT License.
