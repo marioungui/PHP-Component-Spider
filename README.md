@@ -1,54 +1,84 @@
-
 # PHP Component Spider
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![CodeFactor](https://www.codefactor.io/repository/github/marioungui/php-component-spider/badge)](https://www.codefactor.io/repository/github/marioungui/php-component-spider) [![Latest Stable Version](https://poser.pugx.org/marioungui/php-component-spider/v)](https://packagist.org/packages/marioungui/php-component-spider) [![License](https://poser.pugx.org/marioungui/php-component-spider/license)](https://packagist.org/packages/marioungui/php-component-spider) [![PHAR Build](https://github.com/marioungui/PHP-Component-Spider/actions/workflows/php.yml/badge.svg)](https://github.com/marioungui/PHP-Component-Spider/actions/workflows/php.yml)
 
-This is a web crawler developed for internal use of Brand Websites. This is not suitable for using in a web server but in a Terminal with the following example:
+This PHP Component Spider is designed to scrape websites for specific components or search criteria defined by XPath filters. It uses the PHPScraper library to fetch and process web pages, and the League\Csv library to log the results in CSV files. This tool is easy to extend with custom XPath filters to meet various scraping needs.
 
-    php spider.php -c{component} -d{domain}
+## Features
 
-This is assuming that the PHP 8.1 engine is with global availability and the terminal has the right permissions to use the PHP binary.
+- Scrape websites for specific components or text based on XPath filters.
+- Log results into CSV files for further analysis.
+- Configurable timeout and maximum redirects.
+- Easy to extend with additional filters.
 
-The current components that the script can scan for now is
+## Requirements
 
-- MVP [-cmvp]
+- PHP 8.1 or higher
+- Composer
 
-- Smart Question Search Engine [-csearch]
+## Build & Run from Source Code
 
-- Related Products Block [-crelated-products]
+1. Clone the repository:
 
-- Related Articles Block [-crelated-articles]
+```bash
+git clone https://github.com/marioungui/PHP-Component-Spider.git
+```
+2. Navigate to the project directory:
 
-- Brand Carousel [-cbrand-carousel]
+```bash
+cd PHP-Component-Spider
+```
 
-- Stages Block [-stages-block]
+3. Install the dependencies using Composer:
 
-- Text Search [-cword]
+```bash
+composer install
+```
 
-*There could be some issues with the related Products and Articles and further testing is coming to refine the filter.*
+4. Build the Phar package:
+```bash
+php -d phar.readonly=0 phar-creator.php
+```
 
-*If a Text search is selected, make sure you alzo init the -w variable, for example: if you are searching for the word "Nestlé" the command will be -wNestlé*
+5. Run the batch spider.bat
+6. Follow the on-screen instructions to select the component to search for and the domain to scrape.
 
-## Setup
+## Filters
+The filters are defined in filters.php and use XPath to identify specific components on the web pages. Here are the current filters available:
 
-Setup is easy! All you have to do is clone this repository with the following command:
+| Component | Index | Filter |
+| --- | --- | --- |
+| MVP Block | 1   | `//*[@class='mvp-block']` |
+| Smart Question Search Engine Block | 2   | `//*[@class='sqe-block']` |
+| Related Articles Block | 3   | `//h2[text()='Artigos relacionados' or text()='Artigos Relacionados' or text()='Articulos Relacionados' or text()='Articulos relacionados' ]` |
+| Related Products Block | 4   | `//h2[text()='Produtos Relacionados' or text()='Produtos Relacionados' or text()='Productos relacionados' or text()='Productos Relacionados']` |
+| Brands Block | 5   | `//*[starts-with(@id, 'brands_block')]/@id` |
+| Stages Block | 6   | `//*[starts-with(@id, 'stages_block')]` |
+| String Search | 7   | `//*[contains(text(),'word')]` |
+| Action Bar | 8   | `//div[contains(@class, 'action-bar__wrapper')]` |
+| Links Containing | 9   | `//a[contains(@href, 'word')]` |
+| Stages Block using From Library | 10  | `//div[contains(@class, 'paragraph--type--stages-block')]//div[contains(@class, 'grid-col-10')]` |
 
-    git clone https://github.com/marioungui/PHP-Component-Spider.git
+## Extending with Custom Filters
 
-## ¿How it works?
+Extending the tool with new filters is simple:
 
-The spider works in the following steps
+1.  Open the `filters.php` file.
+2.  Add a new `case` in the `switch` statement with your component name or index.
+3.  Define the `$component` and `$filter` variables with your custom XPath.
 
-1. Checks if all the required parameters is set
+Example:
 
-2. Check if the parameters is valid
+```php
+case 'new-component':
+case 11:
+    $component = "New Component";
+    $filter = "//*[@class='new-component-class']";
+    break;
+```
 
-3. Check if the domain is valid with DNS solving correctly
+## Contributing
+Feel free to submit issues or pull requests if you have any improvements or new features you'd like to add.
 
-4. If all check passes, then parses the sitemap.xml file
-
-5. The scan for the components begins, with an **OK** if valid and **Error** if the component is missing from the current scanned page.
-
-## Bugs? Suggestions?
-
-You can fill a [Github Issue here](https://github.com/marioungui/PHP-Component-Spider/issues/new) with suggestions, bug fixes or you could make a GIT clone and make a Pull Request after making changes and testing.
+## License
+This project is licensed under the MIT License.
