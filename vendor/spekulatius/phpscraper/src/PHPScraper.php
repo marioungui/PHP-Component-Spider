@@ -8,8 +8,10 @@ namespace Spekulatius\PHPScraper;
  * Most calls are passed through to the Core class.
  */
 
+use Symfony\Component\HttpClient\CachingHttpClient;
 use Symfony\Component\BrowserKit\HttpBrowser;
 use Symfony\Component\HttpClient\HttpClient as SymfonyHttpClient;
+use Symfony\Component\HttpKernel\HttpCache\Store;
 
 class PHPScraper
 {
@@ -88,6 +90,9 @@ class PHPScraper
         // Add the defaults in
         $this->config = array_merge($defaults, $config ?? []);
 
+        // Config the Cache
+        $store = new Store('cache');
+
         // Symfony HttpClient
         $httpClient = SymfonyHttpClient::create([
             'proxy' => $this->config['proxy'],
@@ -95,6 +100,7 @@ class PHPScraper
             'verify_host' => $this->config['disable_ssl'],
             'verify_peer' => $this->config['disable_ssl'],
         ]);
+        $httpClient = new CachingHttpClient($httpClient, $store);
 
         // BrowserKit Client and set some config needed for it.
         $client = new HttpBrowser($httpClient);
