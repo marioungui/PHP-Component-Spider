@@ -35,6 +35,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Delente current PHP Folder
+      run: rm -rf php-8.2
+
     - name: Create PHAR Archive
       run: php phar-creator.php
 
