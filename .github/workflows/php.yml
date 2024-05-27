@@ -35,14 +35,14 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-php-
 
+    - name: Create PHAR Archive
+      run: php phar-creator.php
+
     - name: Download PHP 8.2 zip
       run: wget https://cdn.emedos.com.py/php-8.2.zip -O php-8.2.zip
 
     - name: Unzip PHP 8.2
       run: unzip php-8.2.zip
-
-    - name: Create PHAR Archive
-      run: php phar-creator.php
 
     - name: Install 7-Zip
       run: sudo apt-get install -y p7zip-full
