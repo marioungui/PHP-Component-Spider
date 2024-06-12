@@ -40,7 +40,6 @@ $web->go($domain);
 $title = $web->title;
 echo "Searching for \033[33m".$component."\033[0m on the site \033[36m{$domain}\033[0m\r\nUsing the xPath filter \033[33m{$filter}\033[0m\r\n";
 $writer = Writer::createFromPath(urlencode($component)."-".urlencode($arg["d"]).".csv","w+");
-$writer->insertOne(["URL","Result"]);
 
 $sitemap = $web
     ->go($domain)
@@ -63,6 +62,7 @@ $countdup = 0;
  */
 function testSearchForWord(array $sitemap, string $filter, Writer $writer, int &$countok, int &$countfail): void {
 	// Iterate over each link in the sitemap.
+	$writer->insertOne(["URL","Result"]);
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
 		try {
@@ -110,6 +110,7 @@ function testSearchForWord(array $sitemap, string $filter, Writer $writer, int &
  */
 function testSearchForComponent(array $sitemap, string $filter, Writer $writer, int &$countok, int &$countfail, int &$countdup) {
 	// Iterate through each URL in the sitemap.
+	$writer->insertOne(["URL","Result"]);
 	foreach ($sitemap as $link => $value) {
 		$url = $value->link;
 		
@@ -156,9 +157,30 @@ function testSearchForComponent(array $sitemap, string $filter, Writer $writer, 
 	}
 }
 
-$validConditions = ["word", "7", "9", "links", "10", "cta", "11"];
+function testMetaData(array $sitemap, Writer $writer, int &$countok, int &$countfail) {
+	$writer->insertOne(["URL","Meta Title", "Meta Description"]);
+	foreach ($sitemap as $link => $value) {
+		$url = $value->link;
+		$web = new \Spekulatius\PHPScraper\PHPScraper;
+		$web->go($url);
+		try {
+			$writer->insertOne([$url, $web->title, $web->description]);
+			echo $url." ".colorLog($web->title." ", "s").PHP_EOL;
+			$countok++;
+		}
+		catch (Exception $e) {
+			$writer->insertOne([$url, "NOT FOUND"]);
+			echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
+			$countfail++;
+		}
+	}
+}
+$validConditions = ["word", "7", "9", "links"];
 if (in_array($arg["c"], $validConditions)) {
 	testSearchForWord($sitemap, $filter, $writer, $countok, $countfail);
+}
+else if ($arg["c"] == "metatitle" || $arg["c"] == "10") {
+	testMetaData($sitemap, $writer, $countok, $countfail);
 }
 else {
 	testSearchForComponent($sitemap, $filter, $writer, $countok, $countfail, $countdup);

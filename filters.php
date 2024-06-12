@@ -51,9 +51,9 @@ switch (strtolower($arg["c"])) {
 		$component = "Links containing ".$word."";
 		$filter = "//a[contains(@href, '".$word."')]";
 		break;
-	case 'cta':
 	case 10:
-		$component = "Stages Block using From Library";
-		$filter = "//div[contains(@class, 'paragraph--type--stages-block')]//div[contains(@class, 'grid-col-10')]";
+	case 'metatitle':
+		$component = "SEO Metadata Title & Description";
+		$filter = "SEO Meta";
 		break;
 }
