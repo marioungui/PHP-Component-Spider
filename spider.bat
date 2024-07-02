@@ -37,6 +37,7 @@ echo 7. Search for a certain word or phrase (Case Sensitive)
 echo 8. Action Bar
 echo 9. URL
 echo 10. SEO Metadata
+echo 11. Links with _blank target
 set /p component=Type the number of the option you would use: 
 cls
 set /p domain=Enter the domain where you want to search: 

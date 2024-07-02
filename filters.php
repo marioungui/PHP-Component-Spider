@@ -56,4 +56,9 @@ switch (strtolower($arg["c"])) {
 		$component = "SEO Metadata Title & Description";
 		$filter = "SEO Meta";
 		break;
+	case 11:
+	case 'new-tab':
+		$component = "Links that open in a new tab";
+		$filter = "//a[@target='_blank']";
+		break;
 }

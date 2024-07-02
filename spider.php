@@ -175,7 +175,7 @@ function testMetaData(array $sitemap, Writer $writer, int &$countok, int &$count
 		}
 	}
 }
-$validConditions = ["word", "7", "9", "links"];
+$validConditions = ["word", "7", "9", "links", "11", "new-tab"];
 if (in_array($arg["c"], $validConditions)) {
 	testSearchForWord($sitemap, $filter, $writer, $countok, $countfail);
 }
