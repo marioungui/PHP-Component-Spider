@@ -5,7 +5,7 @@
  *
  * @var string
  */
-$CurrentVersion = "v0.5.5";
+$CurrentVersion = "v0.6.0";
 
 function checkForUpdate() {
     global $CurrentVersion;
@@ -46,22 +46,20 @@ if(php_sapi_name() != "cli") {
  * Function for echoing a string with colored text on terminal
  * @param string $str The string to be echoed in terminal
  * @param string $type The type of message to be echoed, 'i' for info, 's' for success, 'w' for warning, 'i' for info (default)
- * @return void
+ * @return string
  */
 function colorLog($str, $type = 'i'){
     switch ($type) {
         case 'e': //error
-            echo "\033[31m{$str}\033[0m";
-        break;
+            return "\033[31m{$str}\033[0m";
         case 's': //success
-            echo "\033[32m{$str}\033[0m";
-        break;
+            return "\033[32m{$str}\033[0m";
         case 'w': //warning
-            echo "\033[33m{$str}\033[0m";
-        break;  
+            return "\033[33m{$str}\033[0m";  
         case 'i': //info
-            echo "\033[36m{$str}\033[0m";
-        break;      
+            return "\033[36m{$str}\033[0m";
+        default:
+            return $str;
     }
 }
 
@@ -69,13 +67,20 @@ checkForUpdate();
 
 // Domain checker
 function checkDomain($domain) {
-	if(filter_var(gethostbyname($domain), FILTER_VALIDATE_IP)) {
-	    return TRUE;
-	}
-	else {
-		return false;
-	}
+    // Check if the input is a valid URL
+    if (filter_var(gethostbyname($domain), FILTER_VALIDATE_IP)) {
+        return $type = "sitemap";
+    }
+    // Check if the input is a likely valid file path and if it is a CSV file
+    elseif (file_exists($domain) && pathinfo($domain, PATHINFO_EXTENSION) === 'csv') {
+        return $type = "csv";
+    }
+    // Not a valid URL, not a likely valid file path, or not a CSV file
+    else {
+        return false;
+    }
 }
+
 
 //CLI Arg helper
 
@@ -86,7 +91,7 @@ if (!isset($arg)) {
         exit();
     }
     if (!checkDomain($arg["d"])) {
-        colorLog("The domain isn't valid", "e");
+        colorLog("The domain or provided file isn't valid", "e");
         exit();
     }
 }

@@ -2,8 +2,8 @@
 
 use League\Csv\Writer;
 
-require "helper.php";
 require "vendor/autoload.php";
+require "helper.php";
 require "filters.php";
 
 /**
@@ -28,163 +28,200 @@ $web->setConfig(['timeout' => 30]);
 $web->setConfig(['max_redirects' => 10]);
 
 /**
- * The domain name to scrape, with the protocol and subdomain included.
+ * The input (domain or CSV file path).
  *
- * @var string $domain The fully qualified domain name.
+ * @var string $input The input provided by the user.
  */
-$domain = "https://{$arg["d"]}";
+$input = $arg["d"];
 
-$web->go($domain);
+/**
+ * Check the type of input provided (sitemap or CSV file).
+ *
+ * @var string|false $type The type of input ('sitemap', 'csv', or false if invalid).
+ */
+$type = checkDomain($input);
 
+if ($type === false) {
+    echo "Invalid input. Please provide a valid domain or CSV file path.";
+    exit(1);
+}
 
-$title = $web->title;
-echo "Searching for \033[33m".$component."\033[0m on the site \033[36m{$domain}\033[0m\r\nUsing the xPath filter \033[33m{$filter}\033[0m\r\n";
-$writer = Writer::createFromPath(urlencode($component)."-".urlencode($arg["d"]).".csv","w+");
-
-$sitemap = $web
-    ->go($domain)
-    ->sitemap();
+$writer = Writer::createFromPath(urlencode($component)."-".urlencode($input).".csv", "w+");
 
 $countok = 0;
 $countfail = 0;
 $countdup = 0;
 
-// Init the Crawler and process all
+/**
+ * Function to extract URLs from a sitemap.
+ *
+ * @param \Spekulatius\PHPScraper\PHPScraper $web The PHPScraper object.
+ * @param string $domain The domain to scrape.
+ * @return array The array of URLs.
+ */
+function extractUrlsFromSitemap(\Spekulatius\PHPScraper\PHPScraper $web, string $domain): array {
+    $sitemap = $web->go($domain)->sitemap();
+    $urls = [];
+
+    foreach ($sitemap as $link => $value) {
+        $urls[] = $value->link;
+    }
+
+    return $urls;
+}
+
 
 /**
- * Searches for a specific word on a given sitemap and logs the results.
+ * Function to read URLs from the "URL" column of a CSV file.
  *
- * @param array  $sitemap The sitemap to search in.
- * @param string $filter   The CSS filter to apply.
- * @param Writer $writer   The CSV writer to log the results.
- * @param int    &$countok The total number of pages containing the word.
- * @param int    &$countfail The total number of pages not containing the word.
+ * @param string $filePath The path to the CSV file.
+ * @return array The array of URLs from the "URL" column.
  */
-function testSearchForWord(array $sitemap, string $filter, Writer $writer, int &$countok, int &$countfail): void {
-	// Iterate over each link in the sitemap.
-	$writer->insertOne(["URL","Result"]);
-	foreach ($sitemap as $link => $value) {
-		$url = $value->link;
-		try {
-			// Try to go to the URL and create a new instance of PHPScraper.
-			$web = new \Spekulatius\PHPScraper\PHPScraper;
-			$web->go($url);
-		}
-		catch (Symfony\Component\HttpClient\Exception\TransportException $e) {
-			// If the transport exception is thrown, continue to the next iteration.
-			continue;
-		}
-		try {
-			// Count the number of elements matching the filter.
-			$count = count($web->filter($filter));
-			if ($count > 0) {
-				// If the count is greater than 0, write the URL and the count to the CSV.
-				echo $url." ".colorLog("FOUND {$count} TIMES " , "s").PHP_EOL;
-				$writer->insertOne([$url, "FOUND {$count} TIMES"]);
-				$countok++;
-			}
-			else {
-				// If the count is 0, write the URL and "NOT FOUND" to the CSV.
-				echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
-				$writer->insertOne([$url, "NOT FOUND"]);
-				$countfail++;
-			}
-		}
-		catch (Exception $e) {
-			// If any other exception is thrown, write the URL and "NOT FOUND" to the CSV and increment $countfail.
-			echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
-			$writer->insertOne([$url, "NOT FOUND"]);
-			$countfail++;
-		}
-	}
+function extractUrlsFromCsv(string $filePath): array {
+    $csv = \League\Csv\Reader::createFromPath($filePath, 'r');
+    $csv->setHeaderOffset(0);
+    $urls = [];
+
+    foreach ($csv->getRecords() as $record) {
+        // Fetch the value of the "URL" column
+        $urls[] = $record['URL'];
+    }
+
+    return $urls;
 }
+
+/**
+ * Searches for a specific word on a given array of URLs and logs the results.
+ *
+ * @param array $urls The array of URLs to search in.
+ * @param string $filter The CSS filter to apply.
+ * @param Writer $writer The CSV writer to log the results.
+ * @param int &$countok The total number of pages containing the word.
+ * @param int &$countfail The total number of pages not containing the word.
+ */
+function testSearchForWord(array $urls, string $filter, Writer $writer, int &$countok, int &$countfail): void {
+    $writer->insertOne(["URL","Result"]);
+    foreach ($urls as $url) {
+        try {
+            $web = new \Spekulatius\PHPScraper\PHPScraper;
+            $web->go($url);
+        } catch (Symfony\Component\HttpClient\Exception\TransportException $e) {
+            continue;
+        }
+        try {
+            $count = count($web->filter($filter));
+            if ($count > 0) {
+                echo $url." ".colorLog("FOUND {$count} TIMES ", "s").PHP_EOL;
+                $writer->insertOne([$url, "FOUND {$count} TIMES"]);
+                $countok++;
+            } else {
+                echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
+                $writer->insertOne([$url, "NOT FOUND"]);
+                $countfail++;
+            }
+        } catch (Exception $e) {
+            echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
+            $writer->insertOne([$url, "NOT FOUND"]);
+            $countfail++;
+        }
+    }
+}
+
 /**
  * Function to test if a given filter is present in a webpage.
  *
- * @param array $sitemap The sitemap of the webpage.
+ * @param array $urls The array of URLs to search in.
  * @param string $filter The filter to search for.
  * @param Writer $writer The CSV writer object.
- * @param int $countok The count of successful finds.
- * @param int $countfail The count of unsuccessful finds.
- * @param int $countdup The count of duplicate finds.
+ * @param int &$countok The count of successful finds.
+ * @param int &$countfail The count of unsuccessful finds.
+ * @param int &$countdup The count of duplicate finds.
  */
-function testSearchForComponent(array $sitemap, string $filter, Writer $writer, int &$countok, int &$countfail, int &$countdup) {
-	// Iterate through each URL in the sitemap.
-	$writer->insertOne(["URL","Result"]);
-	foreach ($sitemap as $link => $value) {
-		$url = $value->link;
-		
-		// Attempt to open the webpage.
-		try {
-			$web = new \Spekulatius\PHPScraper\PHPScraper;
-			$web->go($url);
-		}
-		catch (Symfony\Component\HttpClient\Exception\TransportException $e) {
-			// If HTTP request fails, log the URL and "HTTP Request Failed" to the CSV and continue to the next URL.
-			$writer->insertOne([$url, "HTTP Request Failed"]);
-			continue;
-		}
-		
-		// Try to find the filter in the webpage.
-		try {
-			$dup = count($web->filter($filter));
-			
-			// If the filter is found more than once, log the URL and "DUPLICATED" to the CSV and increment $countdup.
-			if ($dup > 1) {
-				echo $url." ".colorLog("DUPLICATED ", "w").PHP_EOL;
-				$writer->insertOne([$url, "DUPLICATED"]);
-				$countdup++;
-			}
-			// If the filter is found once, log the URL and "OK" to the CSV and increment $countok.
-			else if ($dup == 1) {
-				echo $url." ".colorLog("OK ", "s").PHP_EOL;
-				$writer->insertOne([$url, "OK"]);
-				$countok++;
-			}
-			// If the filter is not found, log the URL and "NOT FOUND" to the CSV and increment $countfail.
-			else {
-				$writer->insertOne([$url, "NOT FOUND"]);
-				echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
-				$countfail++;
-			}
-		}
-		// If any other exception is thrown, log the URL and "NOT FOUND" to the CSV and increment $countfail.
-		catch (Exception $e) {
-			$writer->insertOne([$url, "NOT FOUND "]);
-			echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
-			$countfail++;
-		}
-	}
+function testSearchForComponent(array $urls, string $filter, Writer $writer, int &$countok, int &$countfail, int &$countdup) {
+    $writer->insertOne(["URL","Result"]);
+    foreach ($urls as $url) {
+        try {
+            $web = new \Spekulatius\PHPScraper\PHPScraper;
+            $web->go($url);
+        } catch (Symfony\Component\HttpClient\Exception\TransportException $e) {
+            $writer->insertOne([$url, "HTTP Request Failed"]);
+            continue;
+        }
+        try {
+            $dup = count($web->filter($filter));
+            if ($dup > 1) {
+                echo $url." ".colorLog("DUPLICATED ", "w").PHP_EOL;
+                $writer->insertOne([$url, "DUPLICATED"]);
+                $countdup++;
+            } else if ($dup == 1) {
+                echo $url." ".colorLog("OK ", "s").PHP_EOL;
+                $writer->insertOne([$url, "OK"]);
+                $countok++;
+            } else {
+                $writer->insertOne([$url, "NOT FOUND"]);
+                echo $url." ".colorLog("NOT FOUND ", "e").PHP_EOL;
+                $countfail++;
+            }
+        } catch (Exception $e) {
+            $writer->insertOne([$url, "NOT FOUND "]);
+            echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
+            $countfail++;
+        }
+    }
 }
 
-function testMetaData(array $sitemap, Writer $writer, int &$countok, int &$countfail) {
-	$writer->insertOne(["URL","Meta Title", "Meta Description"]);
-	foreach ($sitemap as $link => $value) {
-		$url = $value->link;
-		$web = new \Spekulatius\PHPScraper\PHPScraper;
-		$web->go($url);
-		try {
-			$writer->insertOne([$url, $web->title, $web->description]);
-			echo $url." ".colorLog($web->title." ", "s").PHP_EOL;
-			$countok++;
+/**
+ * Function to extract meta data from a webpage.
+ *
+ * @param array $urls The array of URLs to search in.
+ * @param Writer $writer The CSV writer object.
+ * @param int &$countok The count of successful finds.
+ * @param int &$countfail The count of unsuccessful finds.
+ */
+function testMetaData(array $urls, Writer $writer, int &$countok, int &$countfail) {
+    $writer->insertOne(["URL","Meta Title", "Meta Description"]);
+    foreach ($urls as $url) {
+		$excludeFormats = ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.tif', '.tiff', '.bmp', '.svg', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.7z', '.mp3', '.mp4', '.avi', '.mkv', '.mov', '.wmv', '.webm', '.m4a', '.m4v', '.txt', '.csv', '.json', '.xml', '.gz', '.sql', '.db', '.iso', '.dmg', '.exe', '.apk', '.crx', '.ipa', '.deb', '.rpm'];
+		foreach ($excludeFormats as $excludeFormat) {
+			if (stripos($url, $excludeFormat) !== false) {
+				echo $url." ".colorLog("SKIPPING FILE WITH EXCLUDED FORMAT", "w").PHP_EOL;
+				$writer->insertOne([$url, "SKIPPING FILE WITH EXCLUDED FORMAT"]);
+				continue 2;
+			}
 		}
-		catch (Exception $e) {
-			$writer->insertOne([$url, "NOT FOUND"]);
-			echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
-			$countfail++;
-		}
-	}
+        $web = new \Spekulatius\PHPScraper\PHPScraper;
+        $web->go($url);
+        try {
+            $writer->insertOne([$url, $web->title, $web->description]);
+            echo $url." ".colorLog($web->title." ", "s").PHP_EOL;
+            $countok++;
+        } catch (Exception $e) {
+            $writer->insertOne([$url, "NOT FOUND"]);
+            echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
+            $countfail++;
+        }
+    }
 }
+
+// Extract URLs based on the type of input
+$urls = [];
+if ($type === "sitemap") {
+    $urls = extractUrlsFromSitemap($web, "https://".$input);
+	echo "Extracting URLs from the site ".colorLog($input, "s").PHP_EOL;
+} elseif ($type === "csv") {
+	echo "Extracting URLs from ".colorLog("provided CSV file", "w").PHP_EOL;
+    $urls = extractUrlsFromCsv($input);
+}
+
 $validConditions = ["word", "7", "9", "links", "11", "new-tab"];
 if (in_array($arg["c"], $validConditions)) {
-	testSearchForWord($sitemap, $filter, $writer, $countok, $countfail);
+    testSearchForWord($urls, $filter, $writer, $countok, $countfail);
+} elseif ($arg["c"] == "metatitle" || $arg["c"] == "10") {
+    testMetaData($urls, $writer, $countok, $countfail);
+} else {
+    testSearchForComponent($urls, $filter, $writer, $countok, $countfail, $countdup);
 }
-else if ($arg["c"] == "metatitle" || $arg["c"] == "10") {
-	testMetaData($sitemap, $writer, $countok, $countfail);
-}
-else {
-	testSearchForComponent($sitemap, $filter, $writer, $countok, $countfail, $countdup);
-}
+
 echo "Total of pages with ".$component." found: $countok".PHP_EOL;
 echo "Total of pages with ".$component." not found: $countfail".PHP_EOL;
 echo "Total of pages with ".$component." duplicated: $countdup".PHP_EOL;

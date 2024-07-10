@@ -40,7 +40,11 @@ echo 10. SEO Metadata
 echo 11. Links with _blank target
 set /p component=Type the number of the option you would use: 
 cls
-set /p domain=Enter the domain where you want to search: 
+echo Enter the domain where you want to search
+echo.
+echo OR
+echo.
+set /p domain=Drag and drop the CSV file containing a list of URL's to check:
 if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 if %component%==9 (set /p word=Enter the URL, or part of the URL you are searching for: )
 cls
