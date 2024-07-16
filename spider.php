@@ -203,6 +203,31 @@ function testMetaData(array $urls, Writer $writer, int &$countok, int &$countfai
     }
 }
 
+function testH1(array $urls, Writer $writer, int &$countok, int &$countfail) {
+    $writer->insertOne(["URL","H1", "H1 Length"]);
+    foreach ($urls as $url) {
+		$excludeFormats = ['.pdf', '.jpg', '.jpeg', '.png', '.gif', '.tif', '.tiff', '.bmp', '.svg', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.7z', '.mp3', '.mp4', '.avi', '.mkv', '.mov', '.wmv', '.webm', '.m4a', '.m4v', '.txt', '.csv', '.json', '.xml', '.gz', '.sql', '.db', '.iso', '.dmg', '.exe', '.apk', '.crx', '.ipa', '.deb', '.rpm'];
+		foreach ($excludeFormats as $excludeFormat) {
+			if (stripos($url, $excludeFormat) !== false) {
+				echo $url." ".colorLog("SKIPPING FILE WITH EXCLUDED FORMAT", "w").PHP_EOL;
+				$writer->insertOne([$url, "SKIPPING FILE WITH EXCLUDED FORMAT"]);
+				continue 2;
+			}
+		}
+        $web = new \Spekulatius\PHPScraper\PHPScraper;
+        $web->go($url);
+        try {
+            $writer->insertOne([$url, $web->h1[0], strlen($web->h1[0])]);
+            echo $url." ".colorLog($web->title." ", "s").PHP_EOL;
+            $countok++;
+        } catch (Exception $e) {
+            $writer->insertOne([$url, "NOT FOUND"]);
+            echo $url." ".colorLog("NOT FOUND", "e").PHP_EOL;
+            $countfail++;
+        }
+    }
+}
+
 // Extract URLs based on the type of input
 $urls = [];
 if ($type === "sitemap") {
@@ -218,7 +243,10 @@ if (in_array($arg["c"], $validConditions)) {
     testSearchForWord($urls, $filter, $writer, $countok, $countfail);
 } elseif ($arg["c"] == "metatitle" || $arg["c"] == "10") {
     testMetaData($urls, $writer, $countok, $countfail);
-} else {
+} elseif ($arg["c"] == "h1-length" || $arg["c"] == "12") {
+    testH1($urls, $writer, $countok, $countfail);
+} 
+else {
     testSearchForComponent($urls, $filter, $writer, $countok, $countfail, $countdup);
 }
 

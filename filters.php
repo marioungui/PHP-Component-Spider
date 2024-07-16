@@ -66,4 +66,9 @@ switch (strtolower($arg["c"])) {
 		$component = "NDG Pages containing Bootstrap";
 		$filter = "//link[@href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css']";
 		break;
+	case 13:
+	case 'h1-length':
+		$component = "H1 Length";
+		$filter = "H1 Length";
+		break;
 	}
