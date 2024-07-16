@@ -38,7 +38,8 @@ echo 8. Action Bar
 echo 9. URL
 echo 10. SEO Metadata
 echo 11. Links with _blank target
-set /p component=Type the number of the option you would use: 
+echo 12. NDG MX broken pages with specific Bootstrap script
+set /p component=Type the number of the option you want to use: 
 cls
 echo Enter the domain where you want to search
 echo.

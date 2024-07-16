@@ -61,4 +61,9 @@ switch (strtolower($arg["c"])) {
 		$component = "Links that open in a new tab";
 		$filter = "//a[@target='_blank']";
 		break;
-}
+	case 12:
+	case 'ndg-broken-pages':
+		$component = "NDG Pages containing Bootstrap";
+		$filter = "//link[@href='https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css']";
+		break;
+	}

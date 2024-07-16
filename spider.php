@@ -207,7 +207,7 @@ function testMetaData(array $urls, Writer $writer, int &$countok, int &$countfai
 $urls = [];
 if ($type === "sitemap") {
     $urls = extractUrlsFromSitemap($web, "https://".$input);
-	echo "Extracting URLs from the site ".colorLog($input, "s").PHP_EOL;
+	echo "Extracting URLs from the site ".colorLog($input, "s")." using filter {$component}".PHP_EOL;
 } elseif ($type === "csv") {
 	echo "Extracting URLs from ".colorLog("provided CSV file", "w").PHP_EOL;
     $urls = extractUrlsFromCsv($input);
