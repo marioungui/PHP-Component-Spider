@@ -5,7 +5,7 @@
  *
  * @var string
  */
-$CurrentVersion = "v0.7.0";
+$CurrentVersion = "v0.7.1";
 
 function checkForUpdate() {
     global $CurrentVersion;
@@ -23,7 +23,7 @@ function checkForUpdate() {
     $release = json_decode($github_content);
     $latest_version = $release->tag_name;
     if (version_compare($latest_version, $CurrentVersion) > 0) {
-        colorLog("A new version of the script is available. Do you want to download it? (y/n) ", "i");
+        echo colorLog("A new version of the script is available. Do you want to download it? (y/n) ", "i");
         $answer = trim(fgets(STDIN));
         if (strtolower($answer) === 'y') {
             $url='https://github.com/marioungui/PHP-Component-Spider/releases/download/'.$release->tag_name.'/PHP-Component-Spider.exe';
