@@ -51,6 +51,9 @@ if %component%==7 (set /p word=Enter the word or phrase you are searching for: )
 if %component%==9 (set /p word=Enter the URL, or part of the URL you are searching for: )
 cls
 
+REM Remove quotes from domain if they exist
+set domain=%domain:"=%
+
 if %component%==7 (
     php -d curl.cainfo="%PHP_DIR%\nestca.pem" -d openssl.cafile="%PHP_DIR%\nestca.pem" spider.phar -w "%word%" -c "%component%" -d "%domain%"
 ) else if %component%==9 (
