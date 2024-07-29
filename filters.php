@@ -71,4 +71,9 @@ switch (strtolower($arg["c"])) {
 		$component = "H1 Length";
 		$filter = "H1 Length";
 		break;
+	case 14:
+	case 'no-teaser':
+		$component = "No intro text on NBBNM article";
+		$filter = "//div[contains(@class, 'main-info-block__text')]//p[string-length(normalize-space(text())) < 5]";
+		break;
 	}
