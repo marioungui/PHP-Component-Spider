@@ -74,6 +74,6 @@ switch (strtolower($arg["c"])) {
 	case 14:
 	case 'no-teaser':
 		$component = "No intro text on NBBNM article";
-		$filter = "//div[contains(@class, 'main-info-block__text')]//p[string-length(normalize-space(text())) < 5]";
+		$filter = "//div[contains(@class, 'main-info-block__text') and string-length(normalize-space(.)) < 5]";
 		break;
 	}
