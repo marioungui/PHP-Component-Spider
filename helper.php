@@ -5,7 +5,7 @@
  *
  * @var string
  */
-$CurrentVersion = "v0.7.2";
+$CurrentVersion = "v0.7.3";
 
 function checkForUpdate() {
     global $CurrentVersion;

@@ -224,7 +224,12 @@ function testH1(array $urls, Writer $writer, int &$countok, int &$countfail) {
         $web->go($url);
 
         try {
-            $h1 = trim(preg_replace('/\s+/', ' ', $web->h1[0]));
+            if (!empty($web->h1) && isset($web->h1[0])) {
+                $h1 = trim(preg_replace('/\s+/', ' ', $web->h1[0]));
+            } else {
+                // No existe un h1 en la página
+                $h1 = 'H1 NOT FOUND';
+            }            
             
             $h1Length = strlen($h1);
 
